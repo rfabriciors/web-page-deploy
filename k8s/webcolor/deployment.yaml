@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webpage
+  name: webcolor
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: webpage
+      app: webcolor
   template:
     metadata:
       labels:
-        app: webpage
+        app: webcolor
     spec:
       containers:
-      - name: webpage
+      - name: webcolor
         image: fabricioveronez/pagina-exemplo:blue
         ports:
         - containerPort: 80
@@ -21,11 +21,29 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: webpage
+  name: webcolor
 spec:
   selector:
-    app: webpage
+    app: webcolor
   ports:
   - port: 80
     targetPort: 80
   type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webcolor-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: webcolor.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: webcolor
+            port:
+              number: 80
